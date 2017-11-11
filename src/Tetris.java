@@ -32,6 +32,15 @@ public class Tetris {
         c.put( 1, 0 ); c.put( 2, 0 );
         c.put( 2, 1 ); c.put( 2, 2 );
         c.print();
+        System.out.println("");
+        c = new Canvas( 4, 3 );
+        byte[][] v = {
+                { 0, 1, 1, 0 },
+                { 0, 0, 1, 0 },
+                { 2, 0, 1, 0 },
+        };
+        c.set( v );
+        c.print();
     }
 
     public static class Canvas{
@@ -58,7 +67,12 @@ public class Tetris {
         }
 
         public void set( byte[][] values ){
-
+            for( int i = 0; i < values.length; i++ ) {
+                byte[] sub = values[i];
+                for (int j = 0; j < sub.length; j++) {
+                    myPixels[ j ][ i ] = sub[ j ];
+                }
+            }
         }
 
         public void print(){
@@ -88,9 +102,22 @@ public class Tetris {
                     Canvas[] res = new Canvas[ 4 ];
                     Canvas c;
                     c = new Canvas( 3, 3 );
-                    //c.put
+                    byte[][] v1 = {
+                            { 0, 1, 0 },
+                            { 0, 1, 0 },
+                            { 0, 1, 1 },
+                    };
+                    c.set( v1 );
                     res[ 0 ] = c;
-                    return null;
+                    c = new Canvas( 3, 3 );
+                    byte[][] v2 = {
+                            { 0, 0, 0 },
+                            { 1, 1, 1 },
+                            { 1, 0, 0 },
+                    };
+                    c.set( v2 );
+                    res[ 1 ] = c;
+                    return res;
                 }
             }, //фигура буквой г
             I {
