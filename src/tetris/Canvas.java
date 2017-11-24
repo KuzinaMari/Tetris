@@ -66,6 +66,14 @@ public class Canvas {
     }
 
     public void draw( Canvas c, int x, int y ){
+        draw( c, x, y, false );
+    }
+
+    public void erase( Canvas c, int x, int y ){
+        draw( c, x, y, true );
+    }
+
+    private void draw( Canvas c, int x, int y, boolean erase ){
         for( int xi = 0; xi < c.myPixels.length; xi++ ){
             for( int yi = 0; yi < c.myPixels[ xi ].length; yi++ ){
                 if( c.myPixels[ xi ][ yi ] != 0 ){
@@ -74,10 +82,17 @@ public class Canvas {
                     if( ( toX <0 )||( toX >=getWidth() )||( toY <0 )||( toY >=getHeight() ) ){
                         throw new RuntimeException( "can't draw outside" );
                     }
-                    if( myPixels[ toX ][ toY ] != 0 ){
-                        throw new RuntimeException( "pixel already exist" );
+                    if( erase ) {
+                        if (myPixels[toX][toY] == 0) {
+                            throw new RuntimeException("pixel not exists");
+                        }
+                    }else{
+                        if (myPixels[toX][toY] != 0) {
+                            throw new RuntimeException("pixel already exists");
+                        }
                     }
-                    myPixels[ toX ][ toY ] = c.myPixels[ xi ][ yi ];
+                    byte newVal = erase ? 0 : c.myPixels[ xi ][ yi ];
+                    myPixels[ toX ][ toY ] = newVal;
                 }
             }
         }
