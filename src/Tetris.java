@@ -98,64 +98,215 @@ public class Tetris {
     public static class Piece{
         public enum Type{
             L {
-                protected Canvas[] createFields(){
-                    Canvas[] res = new Canvas[ 4 ];
-                    Canvas c;
-                    c = new Canvas( 3, 3 );
+                protected void createFields(){
                     byte[][] v1 = {
                             { 0, 1, 0 },
                             { 0, 1, 0 },
                             { 0, 1, 1 },
                     };
-                    c.set( v1 );
-                    res[ 0 ] = c;
-                    c = new Canvas( 3, 3 );
+                    addField( v1 );
                     byte[][] v2 = {
                             { 0, 0, 0 },
                             { 1, 1, 1 },
                             { 1, 0, 0 },
                     };
-                    c.set( v2 );
-                    res[ 1 ] = c;
-                    return res;
+                    addField( v2 );
+                    byte[][] v3 = {
+                            { 1, 1, 0 },
+                            { 0, 1, 0 },
+                            { 0, 1, 0 },
+                    };
+                    addField( v3 );
+                    byte[][] v4 = {
+                            { 0, 0, 1 },
+                            { 1, 1, 1 },
+                            { 0, 0, 0 },
+                    };
+                    addField( v4 );
                 }
+
             }, //фигура буквой г
             I {
-                protected Canvas[] createFields(){
-                    return null;
+                protected void createFields(){
+                    byte[][] v1 = {
+                            { 0, 1, 0, 0 },
+                            { 0, 1, 0, 0 },
+                            { 0, 1, 0, 0 },
+                            { 0, 1, 0, 0 }
+                    };
+                    addField( v1 );
+                    byte[][] v2 = {
+                            { 0, 0, 0, 0 },
+                            { 1, 1, 1, 1 },
+                            { 0, 0, 0, 0 },
+                            { 0, 0, 0, 0 }
+                    };
+                    addField( v2 );
+                    byte[][] v3 = {
+                            { 0, 0, 1, 0 },
+                            { 0, 0, 1, 0 },
+                            { 0, 0, 1, 0 },
+                            { 0, 0, 1, 0 }
+                    };
+                    addField( v3 );
+                    byte[][] v4 = {
+                            { 0, 0, 0, 0 },
+                            { 0, 0, 0, 0 },
+                            { 1, 1, 1, 1 },
+                            { 0, 0, 0, 0 }
+                    };
+                    addField( v4 );
                 }
             },
             Z {
-                protected Canvas[] createFields(){
-                    return null;
+                protected void createFields(){
+                    byte[][] v1 = {
+                            { 0, 1, 1 },
+                            { 1, 1, 0 },
+                            { 0, 0, 0 },
+                    };
+                    addField( v1 );
+                    byte[][] v2 = {
+                            { 0, 1, 0 },
+                            { 0, 1, 1 },
+                            { 0, 0, 1 },
+                    };
+                    addField( v2 );
+                    byte[][] v3 = {
+                            { 0, 0, 0 },
+                            { 0, 1, 1 },
+                            { 1, 1, 0 },
+                    };
+                    addField( v3 );
+                    byte[][] v4 = {
+                            { 1, 0, 0 },
+                            { 1, 1, 0 },
+                            { 0, 1, 0 },
+                    };
+                    addField( v4 );
                 }
             },
             T {
-                protected Canvas[] createFields(){
-                    return null;
+                protected void createFields(){
+                    byte[][] v1 = {
+                            { 1, 1, 1 },
+                            { 0, 1, 0 },
+                            { 0, 0, 0 },
+                    };
+                    addField( v1 );
+                    byte[][] v2 = {
+                            { 0, 0, 1 },
+                            { 0, 1, 1 },
+                            { 0, 0, 1 },
+                    };
+                    addField( v2 );
+                    byte[][] v3 = {
+                            { 0, 0, 0 },
+                            { 0, 1, 0 },
+                            { 1, 1, 1 },
+                    };
+                    addField( v3 );
+                    byte[][] v4 = {
+                            { 1, 0, 0 },
+                            { 1, 1, 0 },
+                            { 1, 0, 0 },
+                    };
+                    addField( v4 );
                 }
             },
             O {
-                protected Canvas[] createFields(){
-                    return null;
+                protected void createFields(){
+                    byte[][] v1 = {
+                            { 1, 1 },
+                            { 1, 1 },
+                    };
+                    addField( v1 );
+                    byte[][] v2 = {
+                            { 1, 1 },
+                            { 1, 1 },
+                    };
+                    addField( v2 );
+                    byte[][] v3 = {
+                            { 1, 1 },
+                            { 1, 1 },
+                    };
+                    addField( v3 );
+                    byte[][] v4 = {
+                            { 1, 1 },
+                            { 1, 1 },
+                    };
+                    addField( v4 );
                 }
             },//квадрат
             J {
-                protected Canvas[] createFields(){
-                    return null;
+                protected void createFields(){
+                    byte[][] v1 = {
+                            { 0, 1, 0 },
+                            { 0, 1, 0 },
+                            { 1, 1, 0 },
+                    };
+                    addField( v1 );
+                    byte[][] v2 = {
+                            { 1, 0, 0 },
+                            { 1, 1, 1 },
+                            { 0, 0, 0 },
+                    };
+                    addField( v2 );
+                    byte[][] v3 = {
+                            { 0, 1, 1 },
+                            { 0, 1, 0 },
+                            { 0, 1, 0 },
+                    };
+                    addField( v3 );
+                    byte[][] v4 = {
+                            { 0, 0, 0 },
+                            { 1, 1, 1 },
+                            { 0, 0, 1 },
+                    };
+                    addField( v4 );
                 }
             }, //обратная г
             S {
-                protected Canvas[] createFields(){
-                    return null;
+                protected void createFields(){
+                    byte[][] v1 = {
+                            { 1, 1, 0 },
+                            { 0, 1, 1 },
+                            { 0, 0, 0 },
+                    };
+                    addField( v1 );
+                    byte[][] v2 = {
+                            { 0, 0, 1 },
+                            { 0, 1, 1 },
+                            { 0, 1, 0 },
+                    };
+                    addField( v2 );
+                    byte[][] v3 = {
+                            { 0, 0, 0 },
+                            { 1, 1, 0 },
+                            { 0, 1, 1 },
+                    };
+                    addField( v3 );
+                    byte[][] v4 = {
+                            { 0, 1, 0 },
+                            { 1, 1, 0 },
+                            { 1, 0, 0 },
+                    };
+                    addField( v4 );
                 }
             }; // обратная z
 
-            private final Canvas[] myFields;
+            private final Canvas[] myFields = new Canvas[ 4 ];
             Type(){
-                myFields = createFields();
+                createFields();
             }
-            protected abstract Canvas[] createFields();
+            protected abstract void createFields();
+            protected int myCurrentCanvas = -1;
+            protected void addField( byte[][] field ){
+                Canvas c = new Canvas( field[ 0 ].length,  field.length );
+                c.set( field );
+                myCurrentCanvas++;
+                myFields[ myCurrentCanvas ] = c;
+            }
         }
         private final Type myType;
         public Piece( Type type ){
