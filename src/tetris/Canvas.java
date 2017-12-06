@@ -3,7 +3,7 @@ package tetris;
 /**
  * Created by 1 on 24.11.2017.
  */
-public class Canvas {
+public class Canvas { 
     private byte[][] myPixels;
     private int myWidth;
     private int myHeight;
