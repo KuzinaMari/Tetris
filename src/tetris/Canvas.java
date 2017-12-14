@@ -66,10 +66,18 @@ public class Canvas {
     }
 
     public void draw( Canvas c, int x, int y ){
+    		// System.out.println( "try draw" );
+    		// print();
+    		// System.out.println( "figure" );
+    		// c.print();
         draw( c, x, y, false );
     }
 
     public void erase( Canvas c, int x, int y ){
+    		// System.out.println( "try erase" );
+    		// print();
+    		// System.out.println( "figure" );
+    		// c.print();
         draw( c, x, y, true );
     }
 

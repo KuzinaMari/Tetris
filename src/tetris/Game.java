@@ -33,7 +33,9 @@ public class Game{
 		Piece piece = null;
 		int rotation = 0;
 		int px = 0; int py = 0;
-		for( int time = 0; time < 20; time++ ){
+		Canvas lastField = null;
+		boolean appeared = false;
+		for( int time = 0; time < 40; time++ ){
 			if( piece == null ){
 				if( myPieces.isEmpty() ){
 					throw new RuntimeException( "end of pieces" );
@@ -41,6 +43,7 @@ public class Game{
 				piece = myPieces.remove( 0 );
 				int startX = ( area.myField.getWidth() - piece.fieldWidth() ) / 2;
 				int startY = 1;
+				rotation = 0;
 				Canvas field = piece.getType().getFields()[ rotation ]; //здесь rotation
 				  //это поворот с которым появляется фигура, то есть
 				  //его видимо нужно хранить в piece
@@ -53,25 +56,31 @@ public class Game{
 				if( startY > 0 ){
 					throw new RuntimeException( "game over" );
 				}
+				lastField = field;
 				area.getField().draw( field, startX, startY );
 				px = startX;
 				py = startY;
+				appeared = true;
 			}else{
+				//System.out.println( "rotation "+ rotation );
+				Canvas field = piece.getType().getFields()[ rotation ];
+				area.getField().erase( lastField, px, py );
 				if( currentMove != null && currentMove.getTime() == time ){
 					rotation = currentMove.getRotation();
 					px = currentMove.getShift();
 					currentMove = currentMove.getNext();
 				}
-				Canvas field = piece.getType().getFields()[ rotation ];
-				area.getField().erase( field, px, py );
-				if( area.getField().canDraw( field, px, py +1 ) ){
-					py++;
+				lastField = field;
+				int newPy = appeared ? py : py + 1;
+				if( area.getField().canDraw( field, px, newPy ) ){
+					py = newPy;
 					area.getField().draw( field, px, py );
 				}else{
 					area.getField().draw( field, px, py );
 					checkFullRows();
 					piece = null;
 				}
+				appeared = false;
 			}
 			System.out.println( time );
 			area.getField().print();

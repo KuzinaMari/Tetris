@@ -38,7 +38,12 @@ public class Solver {
 				pieces.add( new Piece( Type.Z ) );
 				pieces.add( new Piece( Type.S ) );
 				pieces.add( new Piece( Type.T ) );
-				Game game = new Game( pieces, null );
+				Game game = new Game( pieces, new Move( 2, 0, 4, 
+					new Move( 3, 0, 9,
+					new Move( 1, 1, 16,
+					new Move( -1, 1, 17,
+					new Move( 0, 0, 22,
+					new Move( 1, 1, 29 ) ) ) ) ) ) );
 				game.play();
 
 	}

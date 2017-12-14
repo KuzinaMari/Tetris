@@ -13,6 +13,11 @@ public class Move{
 		myTime = time;
 	}
 
+	public Move(int shift, int rotation, int time, Move next) {
+		this( shift, rotation, time );
+		myNext = next;
+	}
+
 	public int getShift() {
 		return myShift;
 	}
