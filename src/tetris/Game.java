@@ -5,11 +5,20 @@ public class Game{
 	private ArrayList<Piece> myPieces;
 	private Move currentMove;
 	private Area area;
+	private ISolver mySolver;
 
 	public Game(ArrayList<Piece> pieces, Move move) {
 		myPieces = pieces;
 		currentMove = move;
 		area = new Area( 5, 7 );
+	}
+
+	public void setArea( Area area ){
+		this.area = area;
+	}
+
+	public void setSolver( ISolver solver ){
+		mySolver = solver;
 	}
 
 	public void checkFullRows(){
@@ -57,6 +66,7 @@ public class Game{
 					throw new RuntimeException( "game over" );
 				}
 				lastField = field;
+				mySolver.newPieceHandler( area, piece, startX, startY );
 				area.getField().draw( field, startX, startY );
 				px = startX;
 				py = startY;
