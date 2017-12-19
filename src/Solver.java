@@ -119,7 +119,9 @@ public class Solver implements ISolver{
 		}
 	}
 
-	private Position[][] myPositions;
+	private Position[][] myPositions; //state of solver
+	private Piece myPiece;
+	private List<Position> myFinalPositions = new ArrayList<Position>();
 
 	private boolean possibleCoordinates( int x, int y ){
 		return ( x >= -2 ) && ( x < myArea.getField().getWidth() -1 )
@@ -163,6 +165,32 @@ public class Solver implements ISolver{
 		}
 	}
 
+	public void finalPositions(){
+		myFinalPositions.clear();
+		for( int x =0; x< myPositions.length; x++ ){
+			for( int y =0; y< myPositions[ x ].length; y++ ){
+				Position pos = myPositions[ x ][ y ];
+				Position finalPos = new Position();
+				finalPos.x = pos.x;
+				finalPos.y = pos.y;
+				boolean bottom = y == myPositions[ x ].length -1;
+				Position below = bottom ? null : myPositions[ x ][ y +1 ];
+				finalPos.rotation1 = pos.rotation1 && ( bottom || !below.rotation1 );
+				finalPos.rotation2 = pos.rotation2 && ( bottom || !below.rotation2 );
+				finalPos.rotation3 = pos.rotation3 && ( bottom || !below.rotation3 );
+				finalPos.rotation4 = pos.rotation4 && ( bottom || !below.rotation4 );
+				if( finalPos.possible() ){
+					myFinalPositions.add( finalPos );
+				}
+			}
+		}
+		StringBuilder sb = new StringBuilder( "finals: " );
+		for( Position pos : myFinalPositions ){
+			sb.append( pos.x +" "+ pos.y +" "+ pos.toString() +" " );
+		}
+		log( sb.toString() );
+	}
+
 
 	public void newPieceHandler( Area area, Piece newPiece, int x, int y ){
 		log( "new piece " +x +" "+ y );
@@ -170,6 +198,7 @@ public class Solver implements ISolver{
 		resetPositions();
 		possiblePositions( getPosition( x, y ), newPiece );
 		printPositions();
+		finalPositions();
 	}
 
 	public void resetPositions(){
