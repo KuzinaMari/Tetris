@@ -100,7 +100,7 @@ public class Solver implements ISolver{
 			}
 			sb.append( "\n" );
 		}
-		System.out.println( sb.toString() );
+		System.out.print( sb.toString() );
 	}
 
 	public static class Position{
@@ -184,9 +184,15 @@ public class Solver implements ISolver{
 				}
 			}
 		}
-		StringBuilder sb = new StringBuilder( "finals: " );
+		StringBuilder sb = new StringBuilder( "finals:\n" );
 		for( Position pos : myFinalPositions ){
-			sb.append( pos.x +" "+ pos.y +" "+ pos.toString() +" " );
+			String rating = "[";
+			if( pos.rotation1 ) rating += rating( pos.x, pos.y, 0 ) +" ";
+			if( pos.rotation2 ) rating += rating( pos.x, pos.y, 1 ) +" ";
+			if( pos.rotation3 ) rating += rating( pos.x, pos.y, 2 ) +" ";
+			if( pos.rotation4 ) rating += rating( pos.x, pos.y, 3 ) +" ";
+			rating += "]";
+			sb.append( pos.x +" "+ pos.y +" "+ rating +" "+ pos.toString() +"\n" );
 		}
 		log( sb.toString() );
 	}
@@ -195,6 +201,7 @@ public class Solver implements ISolver{
 	public void newPieceHandler( Area area, Piece newPiece, int x, int y ){
 		log( "new piece " +x +" "+ y );
 		myArea = area;
+		myPiece = newPiece;
 		resetPositions();
 		possiblePositions( getPosition( x, y ), newPiece );
 		printPositions();
@@ -211,6 +218,53 @@ public class Solver implements ISolver{
 				pos.rotation4 = false;
 			}
 		}
+	}
+
+	public int rating( int x, int y, int rotation ){
+		Canvas field = myPiece.getType().getFields()[ rotation ];
+		Canvas area = myArea.getField();
+		int rows = 0;
+		area.draw( field, x, y );
+		for( int i =y; i < y+ field.getHeight(); i++ ){
+			if( area.isFull( i ) ){
+				rows++;
+			}
+		}
+		int emptiness = 0;
+		for( int px =0; px < field.getWidth(); px++ ){
+			int pixelY = -1;
+			for( int py = field.getHeight() -1; py >= 0; py-- ){
+				if( field.pixel( px, py ) ){
+					pixelY = py;
+					//log( "pixelY "+ x +" "+ y +" "+ rotation +" "+ pixelY );
+					break;
+				}
+			}
+			if( pixelY >= 0 ){
+				pixelY += y;
+				if( ( pixelY < area.getHeight() -1 ) && !area.pixel( x + px, pixelY +1 ) ){
+					emptiness++;
+				}
+			}
+		}
+		int neighbors = 0;
+		for( int px =0; px < field.getWidth(); px++ ){
+			for( int py =0; py < field.getHeight(); py++ ){
+				if( field.pixel( px, py ) ){
+					int pixelX = x + px;
+					int pixelY = y + py;
+					for( int nx = pixelX -1; nx <= pixelX +1; nx++ )
+						for( int ny = pixelY -1; ny <= pixelY +1; ny++ )
+							if( ( nx < 0 ) || ( nx >= area.getWidth() )
+								|| ( ny < 0 ) || ( ny >= area.getHeight() ) 
+								|| ( area.pixel( nx, ny ) ) ){
+								neighbors++;
+							}
+				}
+			}
+		}
+		area.erase( field, x, y );
+		return rows *100 +y - emptiness *100 +neighbors;
 	}
 
 }

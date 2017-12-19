@@ -26,6 +26,10 @@ public class Canvas {
         myPixels[x][y] = 1;
     }
 
+    public boolean pixel( int x, int y ){
+    	return myPixels[ x ][ y ] != 0;
+    }
+
     public void set(byte[][] values) {
         for (int i = 0; i < values.length; i++) {
             byte[] sub = values[i];
