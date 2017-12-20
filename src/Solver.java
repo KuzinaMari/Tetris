@@ -110,6 +110,32 @@ public class Solver implements ISolver{
 		boolean rotation2;
 		boolean rotation3;
 		boolean rotation4;
+		public boolean rotation( int index ){
+			boolean res = false;
+			switch( index ){
+				case 0: res = rotation1; break;
+				case 1: res = rotation2; break;
+				case 2: res = rotation3; break;
+				case 3: res = rotation4; break;
+				default: throw new RuntimeException( "illegal index" );
+			}
+			return res;
+		}
+		public void setRotation( int index, boolean value ){
+			switch( index ){
+				case 0: rotation1 = value; break;
+				case 1: rotation2 = value; break;
+				case 2: rotation3 = value; break;
+				case 3: rotation4 = value; break;
+				default: throw new RuntimeException( "illegal index" );
+			}
+		}
+		public void resetRotations(){
+			rotation1 = false;
+			rotation2 = false;
+			rotation3 = false;
+			rotation4 = false;
+		}
 		public String toString(){
 			return ( rotation1 ? "1" : "0" ) + ( rotation2 ? "1" : "0" ) 
 				+ ( rotation3 ? "1" : "0" ) + ( rotation4 ? "1" : "0" ) ;
@@ -117,11 +143,25 @@ public class Solver implements ISolver{
 		public boolean possible(){
 			return rotation1 || rotation2 || rotation3 || rotation4;
 		}
+		public int rotationIndex(){
+			if( rotation1 ){
+				return 0;
+			}else if( rotation2 ){
+				return 1;
+			}else if( rotation3 ){
+				return 2;
+			}else if( rotation4 ){
+				return 3;
+			}
+			throw new RuntimeException( "impossible position" );
+		}
 	}
 
 	private Position[][] myPositions; //state of solver
 	private Piece myPiece;
 	private List<Position> myFinalPositions = new ArrayList<Position>();
+	private Position myFinalPosition;
+	private List<Position> myWay;
 
 	private boolean possibleCoordinates( int x, int y ){
 		return ( x >= -2 ) && ( x < myArea.getField().getWidth() -1 )
@@ -185,16 +225,35 @@ public class Solver implements ISolver{
 			}
 		}
 		StringBuilder sb = new StringBuilder( "finals:\n" );
+		Position max = null;
+		int maxRating = -1000000;
 		for( Position pos : myFinalPositions ){
+			if( max == null ){
+				max = new Position();
+				max.x = pos.x;
+				max.y = pos.y;
+			}
+			int[] ratings = new int[ 4 ];
+			for( int i =0; i < 4; i++ )
+				if( pos.rotation( i ) ) ratings[ i ] = rating( pos.x, pos.y, i );
 			String rating = "[";
-			if( pos.rotation1 ) rating += rating( pos.x, pos.y, 0 ) +" ";
-			if( pos.rotation2 ) rating += rating( pos.x, pos.y, 1 ) +" ";
-			if( pos.rotation3 ) rating += rating( pos.x, pos.y, 2 ) +" ";
-			if( pos.rotation4 ) rating += rating( pos.x, pos.y, 3 ) +" ";
+			for( int i =0; i < 4; i++ )
+				if( pos.rotation( i ) ){ 
+					if( ratings[ i ] > maxRating ){
+						maxRating = ratings[ i ];
+						max.x = pos.x;
+						max.y = pos.y;
+						max.resetRotations();
+						max.setRotation( i, true );
+					}
+					rating += ratings[ i ] +" ";
+				}
 			rating += "]";
 			sb.append( pos.x +" "+ pos.y +" "+ rating +" "+ pos.toString() +"\n" );
 		}
+		myFinalPosition = max;
 		log( sb.toString() );
+		log( max.x +" "+ max.y +" "+ maxRating +" "+ max.toString() +"\n" );
 	}
 
 
@@ -206,6 +265,9 @@ public class Solver implements ISolver{
 		possiblePositions( getPosition( x, y ), newPiece );
 		printPositions();
 		finalPositions();
+		Position start = new Position();
+		start.x = x; start.y = y; start.rotation1 = true;
+		buildWay( start );
 	}
 
 	public void resetPositions(){
@@ -264,7 +326,82 @@ public class Solver implements ISolver{
 			}
 		}
 		area.erase( field, x, y );
-		return rows *100 +y - emptiness *100 +neighbors;
+		return rows *100 +y - emptiness *50 +neighbors +(int)Math.round( Math.random() *10 -5 );
+	}
+
+	private boolean wayFound;
+	private void buildWay( Position start ){
+		if( myWay == null ) myWay = new ArrayList<Position>();
+		myWay.clear();
+		myWay.add( start );
+		wayFound = false;
+		buildWay2();
+		myWay.add( myFinalPosition );
+		StringBuilder sb = new StringBuilder();
+		sb.append( "way\n" );
+		for( Position pos : myWay ){
+			sb.append( pos.x +" "+ pos.y +" "+ pos.toString() +"\n" );
+		}
+		log( sb.toString() );
+	}
+
+	int[][] neighbors1 = {
+		{ 0, 1 },
+		{ -1, 0 },
+		{ 1, 0 },
+	};
+	int[][] neighbors2 = {
+		{ -1, 0 },
+		{ 0, 1 },
+		{ 1, 0 },
+	};
+	int[][] neighbors3 = {
+		{ 1, 0 },
+		{ 0, 1 },
+		{ -1, 0 },
+	};
+	int[][] neighbors;
+	private void buildWay2(){
+		Position last = myWay.get( myWay.size() -1 );
+		//log( last.x +" "+ last.y +" "+ last.toString() );
+		if( last.x < myFinalPosition.x ){
+			neighbors = neighbors3;
+		}else if( last.x > myFinalPosition.x ){
+			neighbors = neighbors2;
+		}else{
+			neighbors = neighbors1;
+		}
+		for( int[] shift : neighbors ){
+			int x = last.x + shift[ 0 ];
+			int y = last.y + shift[ 1 ];
+			if( possibleCoordinates( x, y ) ){
+				boolean wasHere = false;
+				for( Position p : myWay ){
+					if( p.x == x && p.y == y ){
+						wasHere = true;
+						break;
+					}
+				}
+				if( wasHere ){
+					continue;
+				}
+				Position pos = getPosition( x, y );
+				//if( pos.rotation( last.rotationIndex() ) ){
+				if( pos.possible() ){
+					if( myFinalPosition.x == pos.x && myFinalPosition.y == pos.y ){
+						wayFound = true;
+						return;
+					}
+					myWay.add( pos );
+					buildWay2();
+					if( wayFound ){
+						return;
+					}else{
+						myWay.remove( myWay.size() -1 );
+					}
+				}
+			}
+		}
 	}
 
 }
