@@ -7,7 +7,7 @@ public class Move{
 	private int myTime;
 	private Move myNext;
 
-	public Move(int shift, int rotation, int time) {
+	public Move(int shift, int rotation, int time) { //сдвиг, поворот, время
 		myShift = shift;
 		myRotation = rotation;
 		myTime = time;
@@ -36,5 +36,9 @@ public class Move{
 
 	public void setNext(Move myNext) {
 		this.myNext = myNext;
+	}
+
+	public String toString(){
+		return myTime +": " +myShift +" "+ myRotation;
 	}
 }

@@ -5,5 +5,5 @@ import java.util.*;
 
 public interface ISolver{
 	Move getMoves( Area area, List<Piece> pieces );
-	void newPieceHandler( Area area, Piece newPiece, int x, int y );
+	void newPieceHandler( Area area, Piece newPiece, int x, int y, int time, Move currentMove );
 }

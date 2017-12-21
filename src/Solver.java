@@ -9,53 +9,29 @@ public class Solver implements ISolver{
 	}
 
 	public static void main(String[] arg){
-		//assert false;
-		// System.out.println( "hell dsssssadsvdddfo" );
-
-		// Tetris.Area area = new Tetris.Area( 5, 7 );
-		// Canvas field = area.getField();
-		// Piece piece = new Piece( Type.O );
-
-		// piece.getType().getFields()[ 0 ].print();
-
-		// area.getField().print();
-
-
-		// int startX = ( field.getWidth() - piece.fieldWidth() ) / 2;
-		// int startY = 1;
-                    // Canvas field = piece.getType().getFields()[ rotation ]; //здесь rotation
-                    //   //это поворот с которым появляется фигура, то есть
-                    //   //его видимо нужно хранить в piece
-                    // for( int s = -piece.fieldHeight(); s <=0; s++ ){
-                    //     if( area.myField.canDraw( field, startX, s ) ){
-                    //         startY = s;
-                    //         break;
-                    //     }
-                    // }
-                    // if( startY > 0 ){
-                    //     throw new RuntimeException( "game over" );
-                    // }
-                    // area.getField().draw( field, startX, startY );
-
 				ArrayList<Piece> pieces = new ArrayList<>();
+				// for( int i =0; i < 5; i++ ){
+				// 	Type type = Type.values()[new Random().nextInt(Type.values().length)];
+				// 	log( type.toString() );
+				// 	pieces.add( new Piece( type ) );
+				// }
+				// pieces.add( new Piece( Type.O ) );
+				// pieces.add( new Piece( Type.I ) );
+				// pieces.add( new Piece( Type.Z ) );
+				// pieces.add( new Piece( Type.S ) );
+				// pieces.add( new Piece( Type.T ) );
 				pieces.add( new Piece( Type.O ) );
 				pieces.add( new Piece( Type.I ) );
-				pieces.add( new Piece( Type.Z ) );
-				pieces.add( new Piece( Type.S ) );
 				pieces.add( new Piece( Type.T ) );
+				pieces.add( new Piece( Type.O ) );
+				pieces.add( new Piece( Type.Z ) );
+				pieces.add( new Piece( Type.I ) );
 				ISolver solver = new Solver();
 				Area area = new Area( 5, 7 );
 				Game game = new Game( pieces, solver.getMoves( area, pieces ) );
 				game.setArea( area );
 				game.setSolver( solver );
-				// Game game = new Game( pieces, new Move( 2, 0, 4, 
-				// 	new Move( 3, 0, 9,
-				// 	new Move( 1, 1, 16,
-				// 	new Move( -1, 1, 17,
-				// 	new Move( 0, 0, 22,
-				// 	new Move( 1, 1, 29 ) ) ) ) ) ) );
 				game.play();
-
 	}
 
 	public Solver(){
@@ -68,12 +44,7 @@ public class Solver implements ISolver{
 				myPositions[ x ][ y ] = pos;
 			}
 		}
-		// for( int x =-2; x< myArea.getField().getWidth() -2; x++ ){
-		// 	for( int y =-2; y< myArea.getField().getHeight() -2; y++ ){
-
-		// 	}
-		// }
-		printPositions();
+		//printPositions();
 	}
 
 	private Position getPosition( int x, int y ){
@@ -84,12 +55,13 @@ public class Solver implements ISolver{
 
 	public Move getMoves( Area area, List<Piece> pieces ){
 		myArea = area;
-		return new Move( 2, 0, 4, 
+		return new Move( 0, 0, 1 ); /*,
+					new Move( 2, 0, 4, 
 					new Move( 3, 0, 9,
 					new Move( 1, 1, 16,
 					new Move( -1, 1, 17,
 					new Move( 0, 0, 22,
-					new Move( 1, 1, 29 ) ) ) ) ) );
+					new Move( 1, 1, 29 ) ) ) ) ) ) );*/
 	}
 
 	public void printPositions(){
@@ -257,7 +229,7 @@ public class Solver implements ISolver{
 	}
 
 
-	public void newPieceHandler( Area area, Piece newPiece, int x, int y ){
+	public void newPieceHandler( Area area, Piece newPiece, int x, int y, int time, Move currentMove ){
 		log( "new piece " +x +" "+ y );
 		myArea = area;
 		myPiece = newPiece;
@@ -268,6 +240,7 @@ public class Solver implements ISolver{
 		Position start = new Position();
 		start.x = x; start.y = y; start.rotation1 = true;
 		buildWay( start );
+		createMoves( time, currentMove );
 	}
 
 	public void resetPositions(){
@@ -326,7 +299,7 @@ public class Solver implements ISolver{
 			}
 		}
 		area.erase( field, x, y );
-		return rows *100 +y - emptiness *50 +neighbors +(int)Math.round( Math.random() *10 -5 );
+		return rows *100 +(int)Math.round( 30 *( 1 - 4 / ( y + 0.1 ) ) ) - emptiness *50 +neighbors *4 +(int)Math.round( Math.random() *6 -3 );
 	}
 
 	private boolean wayFound;
@@ -402,6 +375,31 @@ public class Solver implements ISolver{
 				}
 			}
 		}
+	}
+
+	private void createMoves( int time, Move current ){
+		Move move = current;
+		Position prev = myWay.get( 0 );
+		for( int i =1; i < myWay.size(); i++ ){
+			Position pos = myWay.get( i );
+			//log( pos.x +" " +prev.x +" " + pos.rotationIndex() +" " +prev.rotationIndex() );
+			if( pos.x != prev.x || pos.rotationIndex() != prev.rotationIndex() ){
+				Move nextMove = new Move( pos.x, pos.rotationIndex(), 
+						pos.y +time +1 );
+				move.setNext( nextMove );
+				move = nextMove;
+			}
+			prev = pos;
+		}
+		// move.setNext( new Move( 
+		// 	move.getShift(), move.getRotation(), current.getTime() +myFinalPosition.y +2 ) );
+		move = current;
+		StringBuilder sb = new StringBuilder( "moves\n" );
+		while( move != null ){
+			sb.append( move.toString() +"\n" );
+			move = move.getNext();
+		}
+		log( sb.toString() );
 	}
 
 }
